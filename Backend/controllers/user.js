@@ -81,6 +81,71 @@ const loginUser = async (req, res) => {
   }
 };
 
+//update user
+const updateUser = async (req, res) => {
+  const { id } = req.params;
+  const { username, email, password, age, role } = req.body;
+  try {
+    // Find the user by id
+    let user = await User.findById(id);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Hash the password if it's being updated
+    if (password) {
+      const salt = await bcrypt.genSalt(10);
+      user.password = await bcrypt.hash(password, salt);
+    }
+
+    // Update all fields
+    user.username = username;
+    user.email = email;
+    user.age = age;
+    user.role = role;
+
+    // Save updated user to the database
+    const updatedUser = await user.save();
+
+    res.json({ message: "User updated successfully", user: updatedUser });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+//patch user
+const patchUser = async (req, res) => {
+  const { id } = req.params;
+  const { username, email, password, age, role } = req.body;
+  try {
+    // Find the user by id
+    let user = await User.findById(id);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Update only the fields provided in the request
+    if (username) user.username = username;
+    if (email) user.email = email;
+    if (password) {
+      const salt = await bcrypt.genSalt(10);
+      user.password = await bcrypt.hash(password, salt);
+    }
+    if (age) user.age = age;
+    if (role) user.role = role;
+
+    // Save updated user to the database
+    const updatedUser = await user.save();
+
+    res.json({
+      message: "User partially updated successfully",
+      user: updatedUser,
+    });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
 //delete User
 const deleteUser = async (req, res) => {
   const { id } = req.params;
@@ -100,4 +165,6 @@ module.exports = {
   createUser,
   loginUser,
   deleteUser,
+  updateUser,
+  patchUser,
 };

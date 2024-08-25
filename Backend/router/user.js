@@ -1,5 +1,11 @@
 const express = require("express");
-const { createUser, loginUser } = require("../controllers/user");
+const {
+  createUser,
+  loginUser,
+  updateUser,
+  patchUser,
+  deleteUser,
+} = require("../controllers/user");
 const authentication = require("../middleware/authentication");
 const isAdmin = require("../middleware/isAdmin");
 const { getAllUsers } = require("../controllers/getAllUser");
@@ -34,7 +40,20 @@ router.get("/:id/profile", authentication, (req, res) => {
   const message = `Welcome to profile page, User ${req.user.username}`;
   if (showDetail === "true") res.status(200).json({ message });
 });
+
+// Update the entire user (PUT)
+router.put("/:id/profile", authentication, updateUser);
+
+// Update parts of the user (PATCH)
+router.patch("/:id/profile", authentication, patchUser);
+
+// Delete user (DELETE)
+router.delete("/:id/profile", authentication, deleteUser);
+
+//create post
 router.post("/:id/post", authentication, createPost);
+
+//get post comment
 router.get("/:id/post/:postId", authentication, getPostWithComments);
 
 // Admin dashboard (only accessible by authenticated admin users)
