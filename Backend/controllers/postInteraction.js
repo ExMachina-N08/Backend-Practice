@@ -2,6 +2,7 @@ const Comment = require("../models/comment");
 const Posts = require("../models/post");
 const User = require("../models/user");
 
+//post function
 const createPost = async (req, res) => {
   const { userId, title, content } = req.body;
 
@@ -32,6 +33,7 @@ const getPost = async (req, res) => {
   }
 };
 
+//Comment function
 const createComment = async (req, res) => {
   const { userId, postId, content } = req.body;
 

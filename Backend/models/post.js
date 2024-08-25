@@ -1,25 +1,27 @@
 const mongoose = require("mongoose");
 const User = require("./user");
-const postSchema = new mongoose.Schema({
-  userId: {
-    type: mongoose.Types.ObjectId,
-    required: true,
-    ref: "User",
-  },
-  title: { type: String, required: true },
-  content: {
-    type: String,
-    required: true,
-    trim: true,
-  },
-  comments: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Comment",
+const postSchema = new mongoose.Schema(
+  {
+    userId: {
+      type: mongoose.Types.ObjectId,
+      required: true,
+      ref: "User",
     },
-  ],
-  createdAt: { type: Date, default: Date.now },
-});
+    title: { type: String, required: true },
+    content: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    comments: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Comment",
+      },
+    ],
+  },
+  { timestamps: true }
+);
 
 postSchema.index({ userId: 1 });
 
