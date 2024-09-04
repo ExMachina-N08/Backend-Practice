@@ -1,0 +1,25 @@
+const mongoose = require("mongoose");
+const Schema = mongoose.Schema;
+
+const templateSchema = new Schema({
+  artistID: { type: Schema.Types.ObjectId, ref: "User", required: true },
+  albumName: { type: String, required: true },
+  files: [
+    {
+      fileURL: { type: String },
+      status: {
+        type: String,
+        enum: ["pending", "uploaded"],
+        default: "pending",
+      },
+    },
+  ],
+  status: {
+    type: String,
+    enum: ["submitted", "under_review", "approved", "rejected"],
+    default: "submitted",
+  },
+  timeStamp: { type: Date, default: Date.now },
+});
+
+module.exports = mongoose.model("Template", templateSchema);
