@@ -14,7 +14,6 @@ const {
   createPost,
   getPostWithComments,
 } = require("../controllers/postInteraction");
-
 const router = express.Router();
 
 // Public routes
