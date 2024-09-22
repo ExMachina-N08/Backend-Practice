@@ -3,9 +3,12 @@ const Schema = mongoose.Schema;
 
 const templateSchema = new Schema({
   artistID: { type: Schema.Types.ObjectId, ref: "User", required: true },
+  artistName: { type: String },
   albumName: { type: String, required: true },
+  albumArtwork: { type: String },
   files: [
     {
+      fileName: { type: String },
       fileURL: { type: String },
       status: {
         type: String,

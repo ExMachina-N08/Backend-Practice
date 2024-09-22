@@ -3,7 +3,8 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
 const createUser = async (req, res) => {
-  const { username, email, password, age, role } = req.body;
+  const { username, email, name, password, age, role: userRole } = req.body;
+
   try {
     // Check if the user already exists
     const existingUser = await User.findOne({ email });
@@ -15,16 +16,23 @@ const createUser = async (req, res) => {
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
+    // Determine the role based on the request URL
+    let role = userRole || "user"; // Default role to "user" if not provided
+    if (req.originalUrl === "/api/artist/register") {
+      role = "artist";
+    }
+
     // Create new user
     const newUser = new User({
       username,
       email,
+      name,
       password: hashedPassword,
       age,
       role,
     });
 
-    // Save the user to database
+    // Save the user to the database
     const savedUser = await newUser.save();
 
     // Generate JWT token
@@ -33,7 +41,8 @@ const createUser = async (req, res) => {
       process.env.JWT_SECRET,
       { expiresIn: "2h" }
     );
-    //Generate refresh token
+
+    // Generate refresh token
     const refreshToken = jwt.sign(
       { id: savedUser._id, username: savedUser.username },
       process.env.JWT_REFRESH_SECRET,
@@ -49,11 +58,14 @@ const createUser = async (req, res) => {
     });
 
     res.status(201).json({
-      message: "User registered successfully",
-
+      message:
+        role === "artist"
+          ? "Artist registered successfully"
+          : "User registered successfully",
       user: {
         id: savedUser._id,
         username: savedUser.username,
+        name: savedUser.name,
         email: savedUser.email,
         age: savedUser.age,
         role: savedUser.role,
@@ -109,7 +121,12 @@ const loginUser = async (req, res) => {
       message: "User Login successfully",
       token,
       refreshToken,
-      user: { id: user._id, username: user.username, email: user.email },
+      user: {
+        id: user._id,
+        username: user.username,
+        name: user.name,
+        email: user.email,
+      },
     });
   } catch (err) {
     res.status(500).json({ message: err.message });

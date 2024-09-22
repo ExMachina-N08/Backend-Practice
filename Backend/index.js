@@ -5,7 +5,8 @@ const jwt = require("jsonwebtoken");
 const dotenv = require("dotenv");
 const createError = require("http-errors"); // Import http-errors package
 const router = require("./router/user");
-
+const cors = require("cors");
+const cloudinary = require("./config/cloudinaryConfig");
 //app config
 dotenv.config();
 const app = express();
@@ -18,7 +19,13 @@ mongoose
 app.get("/", (req, res) => {
   res.send(`Server is running`);
 });
-
+//Enable Cors
+app.use(
+  cors({
+    origin: "http://localhost:3001",
+    credentials: true,
+  })
+);
 //middleware
 
 app.use(express.json());

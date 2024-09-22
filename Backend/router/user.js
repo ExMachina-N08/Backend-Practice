@@ -14,18 +14,22 @@ const {
   createPost,
   getPostWithComments,
 } = require("../controllers/postInteraction");
+// import upload from "../middleware/multer";
 const router = express.Router();
 
 // Public routes
 
 // Home route
-router.use("/api", (req, res) => {
+router.get("/api", (req, res) => {
   res.send("Welcome to the home route!");
 });
 
 // User routes
 router.post("/user/register", createUser);
 router.post("/user/login", loginUser);
+
+//Artist route
+router.post("/artist/register", createUser);
 
 // Admin routes
 router.post("/admin/register", createAdmin);
@@ -63,4 +67,7 @@ router.get("/admin/dashboard", authentication, isAdmin, (req, res) => {
 // Admin route to get all users (only accessible by authenticated admin users)
 router.get("/admin/users", authentication, isAdmin, getAllUsers);
 
+//Upload route:
+// router.post("/:id/upload",upload.fields([{}]), uploadLogic);
+// router.get("/:id/list", listSong);
 module.exports = router;
